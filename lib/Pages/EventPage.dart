@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Import de la bibliothèque intl
+import 'package:intl/intl.dart'; // Pour formater les dates
 
 class EventPage extends StatefulWidget {
   const EventPage({super.key});
@@ -29,50 +29,69 @@ class _EventPageState extends State<EventPage> {
             }
 
             // Liste des widgets pour afficher chaque événement
-            List<Widget> eventWidgets = [];
-            snapshot.data!.docs.forEach((element) {
-              // Récupérer toutes les données du document de manière dynamique
+            List<Widget> eventWidgets = snapshot.data!.docs.map((element) {
               Map<String, dynamic> event = element.data() as Map<String, dynamic>;
 
-              // Récupérer le speaker et le sujet
               String speaker = event['speaker'] ?? 'Speaker inconnu';
               String sujet = event['sujet'] ?? 'Sujet non défini';
 
-              // Construire la liste d'éléments pour chaque événement avec speaker en titre et sujet en sous-titre
-              eventWidgets.add(
-                ListTile(
-                  title: Text(speaker, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(12),
+                  title: Text(
+                    speaker,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(sujet, style: TextStyle(color: Colors.blueGrey)),
+                      Text(
+                        sujet,
+                        style: const TextStyle(color: Colors.blueGrey, fontSize: 16),
+                      ),
+                      const SizedBox(height: 8),
                       ...event.entries.map((entry) {
-                        // Afficher toutes les autres clés et valeurs sauf 'speaker' et 'sujet'
                         if (entry.key != 'speaker' && entry.key != 'sujet') {
+                          // Formater proprement la date si c’est un Timestamp
+                          String valueToShow;
+                          if (entry.value is Timestamp) {
+                            DateTime date = (entry.value as Timestamp).toDate();
+                            valueToShow = DateFormat('dd MMMM yyyy – HH:mm').format(date);
+                          } else {
+                            valueToShow = entry.value.toString();
+                          }
+
                           return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            padding: const EdgeInsets.symmetric(vertical: 2.0),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${entry.key}: ',
-                                  style: TextStyle(fontWeight: FontWeight.bold), // Clé en gras
+                                  "${entry.key} : ",
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
                                 ),
-                                Expanded( // Utilisation de Expanded pour éviter l'overflow
-                                  child: Text('${entry.value}', overflow: TextOverflow.ellipsis),
+                                Expanded(
+                                  child: Text(valueToShow),
                                 ),
                               ],
                             ),
                           );
                         }
-                        return Container(); // Ne rien afficher pour 'speaker' et 'sujet' ici
+                        return const SizedBox.shrink();
                       }).toList(),
                     ],
                   ),
                 ),
               );
-            });
+            }).toList();
 
             return ListView(
+              padding: const EdgeInsets.symmetric(vertical: 8),
               children: eventWidgets,
             );
           },
