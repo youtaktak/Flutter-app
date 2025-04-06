@@ -138,32 +138,47 @@ class _AddEventPageState extends State<AddEventPage> {
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
                         FocusScope.of(context).requestFocus(FocusNode());
 
-                        // Affichage d'un message
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Envoi en cours...")),
+                        const SnackBar(content: Text("Envoi en cours...")),
                         );
 
-                        // Exemple : afficher les données dans la console
-                        print('Nom conférence: ${confNameController.text}');
-                        print('Speaker: ${speakerNameController.text}');
-                        print('Type: $selectedConfType');
-                        print('Date: $selectedDate');
+                        try {
+                        CollectionReference eventsRef =
+                        FirebaseFirestore.instance.collection("Events");
 
-                        CollectionReference eventsRef =FirebaseFirestore.instance.collection("Events");
-                        eventsRef.add({
+                        await eventsRef.add({
                           'speaker': speakerNameController.text,
-                          'date': selectedDate?.toIso8601String(), // convertie en texte
+                          'date': selectedDate?.toIso8601String(),
                           'subject': confNameController.text,
                           'type': selectedConfType,
-                          'avatar': 'lior' // tu peux changer ça pour un champ image plus tard
-                        });
+                          'avatar': 'lior'
+                          });
 
-                      }
-                    },
+                          // Réinitialiser les champs
+                          confNameController.clear();
+                          speakerNameController.clear();
+                          setState(() {
+                          selectedConfType = 'talk';
+                          selectedDate = null;
+                          });
+
+                          // Afficher un message de succès
+                          ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("✅ Événement ajouté avec succès !")),
+                          );
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("❌ Une erreur est survenue : $e")),
+                              );
+                            }
+                        }
+                      },
+
+
                     child: const Text("Envoyer"),
                   ),
                 ),

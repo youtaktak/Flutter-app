@@ -12,10 +12,45 @@ class EventPage extends StatefulWidget {
 class _EventPageState extends State<EventPage> {
   @override
   Widget build(BuildContext context) {
+    Future<void> showEventDetailsDialog() async {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Conférence Lior'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Image.asset("assets/images/venice.jpg",height:120),
+                  const Text('titre: sujet de la conf'),
+                  const Text('speaker: lior chamla'),
+                  const Text('date de la conf:'),
+
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              ElevatedButton.icon(
+                  onPressed: (){},
+                  icon: Icon(Icons.calendar_month),
+                  label:  Text("ajouter au calendrier")),
+              TextButton(
+                child: const Text('Fermer'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Planning des événements'),
       ),
+
       body: Center(
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance.collection("Events").snapshots(),
@@ -43,6 +78,10 @@ class _EventPageState extends State<EventPage> {
                 ),
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(12),
+                  trailing: IconButton(
+                    icon: Icon(Icons.info),
+                    onPressed:(){showEventDetailsDialog();}
+                  ),
                   title: Text(
                     speaker,
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
