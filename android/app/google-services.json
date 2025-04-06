@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "694818246831",
+    "project_id": "projet-de-test-d6c26",
+    "storage_bucket": "projet-de-test-d6c26.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:694818246831:android:982a24896536c3b512445a",
+        "android_client_info": {
+          "package_name": "tn.taktak.flutt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQNjIRMPDy-4T03i2e_1xq_2rcIKBKVjo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
