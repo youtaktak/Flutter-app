@@ -9,7 +9,7 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  );
+            );
   runApp(const MyApp());
 }
 
@@ -30,7 +30,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false, // optionnel
       home: Scaffold(
         appBar: AppBar(
           title: Text("application"),
